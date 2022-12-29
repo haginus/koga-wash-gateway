@@ -1,11 +1,29 @@
-from utils import getNetworkDevicesMacMap, getDevice, getDeviceInfo, startLookup
-startLookup()
+from flask import Flask
+import utils as utils
 
-info = getDeviceInfo("8022116E8E7698E841D4FF58F1620CD21FD1B26C")
-print(info)
-p100 = getDevice("8022116E8E7698E841D4FF58F1620CD21FD1B26C")
+app = Flask(__name__)
+utils.startLookup()
 
-p100.handshake() #Creates the cookies required for further methods
-p100.login() #Sends credentials to the plug and creates AES Key and IV for further methods
+@app.route("/")
+def getDeviceList():
+  return utils.getDeviceList(True)
 
-p100.turnOn()
+@app.route("/<deviceId>")
+def getDeviceInfo(deviceId):
+  return utils.getDeviceInfo(deviceId)
+
+@app.route("/<deviceId>/on")
+def turnOn(deviceId):
+  device = utils.getDevice(deviceId)
+  device.handshake()
+  device.login()
+  device.turnOn()
+  return { "status": "ok" }
+
+@app.route("/<deviceId>/off")
+def turnOff(deviceId):
+  device = utils.getDevice(deviceId)
+  device.handshake()
+  device.login()
+  device.turnOff()
+  return { "status": "ok" }
