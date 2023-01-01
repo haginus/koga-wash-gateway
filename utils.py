@@ -4,6 +4,7 @@ import os
 import uuid
 import threading
 import time
+import base64
 from PyP100 import PyP100
 from dotenv import load_dotenv
 load_dotenv()
@@ -72,6 +73,7 @@ def getDeviceList(refresh = False):
     for device in httpResult:
         deviceMac = device['deviceMac'].lower()
         device['deviceIp'] = macMap[deviceMac] if deviceMac in macMap else None
+        device['alias'] = (base64.b64decode(device['alias'])).decode('utf-8')
         result.append(device)
     
     deviceList = result
