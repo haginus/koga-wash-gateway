@@ -73,7 +73,10 @@ def getDeviceList(refresh = False):
     for device in httpResult:
         deviceMac = device['deviceMac'].lower()
         device['deviceIp'] = macMap[deviceMac] if deviceMac in macMap else None
-        device['alias'] = (base64.b64decode(device['alias'])).decode('utf-8')
+        try: 
+            device['alias'] = (base64.b64decode(device['alias'])).decode('utf-8')
+        except:
+            pass
         result.append(device)
     
     deviceList = result
