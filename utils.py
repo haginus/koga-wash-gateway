@@ -15,6 +15,7 @@ load_dotenv()
 tapoEmail = os.getenv('TAPO_EMAIL')
 tapoPassword = os.getenv('TAPO_PASSWORD')
 secret = os.getenv('SECRET')
+autoDiscover = os.getenv('AUTO_DISCOVER') == 'true'
 deviceList = []
 deviceDict = {}
 deviceStaticIps = {}
@@ -32,7 +33,8 @@ def ping(ip):
     return result.returncode == 0
 
 def startLookup():
-    threading.Thread(target=lookupPass).start()
+    if autoDiscover:
+        threading.Thread(target=lookupPass).start()
 
 def lookupPass():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
