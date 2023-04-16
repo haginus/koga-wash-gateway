@@ -6,6 +6,7 @@ import threading
 import time
 import base64
 import csv
+import socket
 from flask import request, abort, make_response, jsonify
 from PyP100 import PyP100
 from dotenv import load_dotenv
@@ -34,7 +35,9 @@ def startLookup():
     threading.Thread(target=lookupPass).start()
 
 def lookupPass():
-    ip = subprocess.run(['ipconfig', 'getifaddr', 'en0'], stdout=subprocess.PIPE).stdout.decode('utf-8').strip()
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip = s.getsockname()[0]
     mask = ip[:ip.rfind('.') + 1]
     for i in range(1, 255):
         deviceIp = mask + str(i)

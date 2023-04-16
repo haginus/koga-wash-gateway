@@ -10,6 +10,7 @@ MarkupSafe==2.1.2
 pkcs7==0.1.2
 pycryptodome==3.17
 PyP100==0.1.2
+python-dotenv==1.0.0
 requests==2.28.2
 urllib3==1.26.15
 Werkzeug==2.2.3
