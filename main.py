@@ -38,3 +38,13 @@ def turnOff(deviceId):
   device.login()
   device.turnOff()
   return { "status": "ok" }
+
+@app.route("/<deviceId>/energy-usage")
+def getEnergyUsage(deviceId):
+  utils.secretGuard()
+  device = utils.getDevice(deviceId)
+  if not device:
+    abort(make_response(jsonify(message="Device not found."), 404))
+  device.handshake()
+  device.login()
+  return device.getEnergyUsage()

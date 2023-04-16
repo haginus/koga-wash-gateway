@@ -8,7 +8,7 @@ import base64
 import csv
 import socket
 from flask import request, abort, make_response, jsonify
-from PyP100 import PyP100
+from PyP100 import PyP110
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -110,7 +110,7 @@ def getDeviceInfo(deviceId):
 def getDevice(deviceId):
     deviceInfo = getDeviceInfo(deviceId)
     if deviceInfo:
-        return PyP100.P100(deviceInfo['deviceIp'], tapoEmail, tapoPassword)
+        return PyP110.P110(deviceInfo['deviceIp'], tapoEmail, tapoPassword)
     else:
         return None
 
