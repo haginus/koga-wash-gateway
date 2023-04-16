@@ -5,14 +5,26 @@ import uuid
 import threading
 import time
 import base64
+import csv
+from flask import request, abort, make_response, jsonify
 from PyP100 import PyP100
 from dotenv import load_dotenv
 load_dotenv()
 
 tapoEmail = os.getenv('TAPO_EMAIL')
 tapoPassword = os.getenv('TAPO_PASSWORD')
+secret = os.getenv('SECRET')
 deviceList = []
 deviceDict = {}
+deviceStaticIps = {}
+
+if os.path.exists("static_ips.csv"):
+    with open("static_ips.csv", "r") as infile:
+        reader = csv.reader(infile)
+        next(reader, None)  # skip the headers
+        for row in reader:
+            deviceStaticIps[row[0].lower()] = row[1]
+    print("Static IPs loaded: " + str(deviceStaticIps))
 
 def ping(ip):
     result = subprocess.run(['ping', '-c', '1', ip], stdout=subprocess.PIPE)
@@ -72,7 +84,7 @@ def getDeviceList(refresh = False):
     macMap = getNetworkDevicesMacMap()
     for device in httpResult:
         deviceMac = device['deviceMac'].lower()
-        device['deviceIp'] = macMap[deviceMac] if deviceMac in macMap else None
+        device['deviceIp'] = deviceStaticIps[deviceMac] if deviceMac in deviceStaticIps else macMap[deviceMac] if deviceMac in macMap else None
         try: 
             device['alias'] = (base64.b64decode(device['alias'])).decode('utf-8')
         except:
@@ -96,3 +108,7 @@ def getDevice(deviceId):
         return PyP100.P100(deviceInfo['deviceIp'], tapoEmail, tapoPassword)
     else:
         return None
+
+def secretGuard():
+    if secret and request.headers.get('Authorization') != 'Bearer ' + secret:
+        abort(make_response(jsonify(message="Unauthorized."), 401))
