@@ -48,7 +48,7 @@ def lookupPass():
     startLookup()
 
 def getNetworkDevicesMacMap():
-    arpResult = subprocess.run(['arp', '-a', '-i', 'en0'], stdout=subprocess.PIPE)
+    arpResult = subprocess.run(['arp', '-a'], stdout=subprocess.PIPE)
     arpList = arpResult.stdout.decode('utf-8').split('\n')
     result = {}
     for arp in arpList:
