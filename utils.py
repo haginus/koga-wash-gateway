@@ -115,5 +115,5 @@ def getDevice(deviceId):
         return None
 
 def secretGuard():
-    if secret and request.headers.get('Authorization') != 'Bearer ' + secret:
+    if secret and request.headers.get('Authorization') != 'Basic ' + secret:
         abort(make_response(jsonify(message="Unauthorized."), 401))
